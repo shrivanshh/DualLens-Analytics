@@ -1,6 +1,7 @@
 #Loading the `config.json` file
 import pandas as pd                # Helpful for working with tabular data like DataFrames
 import matplotlib.pyplot as plt    # Used for Data Visualization / Plots / Graphs
+from langchain.text_splitter import RecursiveCharacterTextSplitter      #  Helpful in splitting the PDF into smaller chunks
 import yfinance as yf              # Used for gathering stock prices
 import json
 import os
@@ -66,3 +67,30 @@ def fetch_financial_metrics(companies):
         plt.xlabel("Company")
         plt.grid(axis='y')
         #plt.show()
+
+def load_ai_initiative_documents():
+    # Unzipping the AI Initiatives Documents
+    import zipfile
+    with zipfile.ZipFile("Companies-AI-Initiatives.zip", 'r') as zip_ref:
+        zip_ref.extractall("/content/")         # Storing all the unzipped contents in this location
+
+    # Path of all AI Initiative Documents
+    ai_initiative_pdf_paths = [f"/content/Companies-AI-Initiatives/{file}" for file in os.listdir("/content/Companies-AI-Initiatives")]
+    ai_initiative_pdf_paths
+
+    from langchain_community.document_loaders import PyPDFDirectoryLoader
+    loader = PyPDFDirectoryLoader(path = "/content/Companies-AI-Initiatives")          # Creating an PDF loader object
+
+    # Defining the text splitter
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        encoding_name='cl100k_base',
+        chunk_size=1000,
+        chunk_overlap=200
+    )
+
+    # Splitting the chunks using the text splitter
+    ai_initiative_chunks = loader.load_and_split(text_splitter=text_splitter)
+
+    # Total length of all the chunks
+    len(ai_initiative_chunks)
+    print(f"Total number of document chunks created: {len(ai_initiative_chunks)}")
