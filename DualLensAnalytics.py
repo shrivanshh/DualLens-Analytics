@@ -1,5 +1,3 @@
-import yfinance as yf              # Used for gathering stock prices
-import os                          # Interacting with the operating system
 import DualLensAnalyticsUtil as DLAUtils
 from langchain_community.document_loaders import PyPDFDirectoryLoader, PyPDFLoader     # Loading a PDF
 from langchain_community.vectorstores import Chroma    # Vector DataBase
